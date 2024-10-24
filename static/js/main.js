@@ -10,19 +10,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let eventSource = null;
 
-    function updateProgress(progress, status) {
+    function updateProgress(progress, status, message) {
+        // Update progress bar
         progressBar.style.width = `${progress}%`;
         progressBar.setAttribute('aria-valuenow', progress);
         
-        const statusMessages = {
-            'downloading': 'Downloading video...',
-            'converting': 'Converting video to audio...',
-            'transcribing': 'Transcribing audio...',
-            'completed': 'Transcription completed!',
-            'error': 'Error occurred during processing'
-        };
-        
-        progressStatus.textContent = statusMessages[status] || status;
+        // Update status message with custom message if provided
+        if (message) {
+            progressStatus.textContent = message;
+        } else {
+            const statusMessages = {
+                'downloading': 'Downloading video from source...',
+                'converting': 'Converting video to audio format...',
+                'transcribing': 'Transcribing audio to text (this may take several minutes)...',
+                'completed': 'Transcription completed successfully!',
+                'error': 'Error occurred during processing'
+            };
+            progressStatus.textContent = statusMessages[status] || status;
+        }
+
+        // Add appropriate Bootstrap classes based on status
+        progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+        if (status === 'completed') {
+            progressBar.classList.add('bg-success');
+        } else if (status === 'error') {
+            progressBar.classList.add('bg-danger');
+        } else {
+            progressBar.classList.add('bg-primary');
+        }
     }
 
     function cleanupEventSource() {
@@ -43,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         progressBar.style.width = '0%';
         progressBar.setAttribute('aria-valuenow', 0);
+        progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated bg-primary';
 
         const formData = new FormData(form);
 
@@ -60,7 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 eventSource.onmessage = function(event) {
                     const progressData = JSON.parse(event.data);
-                    updateProgress(progressData.progress, progressData.status);
+                    updateProgress(
+                        progressData.progress,
+                        progressData.status,
+                        progressData.message
+                    );
 
                     if (progressData.status === 'completed') {
                         transcriptionText.textContent = progressData.transcription;
@@ -69,13 +89,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         processingStatus.classList.add('d-none');
                         submitBtn.disabled = false;
                     } else if (progressData.status === 'error') {
-                        throw new Error('Failed to process video');
+                        errorAlert.textContent = progressData.message || 'Failed to process video';
+                        errorAlert.classList.remove('d-none');
+                        processingStatus.classList.add('d-none');
+                        submitBtn.disabled = false;
+                        cleanupEventSource();
                     }
                 };
 
                 eventSource.onerror = function() {
                     cleanupEventSource();
-                    throw new Error('Lost connection to server');
+                    errorAlert.textContent = 'Lost connection to server';
+                    errorAlert.classList.remove('d-none');
+                    processingStatus.classList.add('d-none');
+                    submitBtn.disabled = false;
                 };
             } else {
                 throw new Error(data.error || 'Failed to process video');

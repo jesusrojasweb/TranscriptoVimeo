@@ -34,19 +34,24 @@ def index():
 
 def generate_progress_events(task_id):
     """Generate server-sent events for progress updates."""
+    last_progress = None
     while True:
         if task_id in transcription_progress:
             progress = transcription_progress[task_id]
-            data = json.dumps({
-                'progress': progress['progress'],
-                'status': progress['status'],
-                'transcription': progress.get('transcription', '')
-            })
-            yield f"data: {data}\n\n"
+            # Only send event if progress has changed
+            if progress != last_progress:
+                data = json.dumps({
+                    'progress': progress['progress'],
+                    'status': progress['status'],
+                    'message': progress.get('message', ''),
+                    'transcription': progress.get('transcription', '')
+                })
+                yield f"data: {data}\n\n"
+                last_progress = progress.copy()
             
             if progress['status'] in ['completed', 'error']:
                 break
-        time.sleep(1)
+        time.sleep(0.5)
 
 @app.route('/progress/<task_id>')
 def progress(task_id):
@@ -64,7 +69,8 @@ def transcribe():
     task_id = str(int(time.time()))
     transcription_progress[task_id] = {
         'progress': 0,
-        'status': 'downloading'
+        'status': 'downloading',
+        'message': 'Initiating video download...'
     }
 
     try:
@@ -75,24 +81,39 @@ def transcribe():
             # Download video
             video_path = download_video(video_url, temp_dir)
             if not video_path:
-                transcription_progress[task_id]['status'] = 'error'
+                transcription_progress[task_id].update({
+                    'status': 'error',
+                    'message': 'Failed to download video'
+                })
                 return jsonify({'error': 'Failed to download video', 'task_id': task_id}), 400
 
-            transcription_progress[task_id]['progress'] = 25
-            transcription_progress[task_id]['status'] = 'converting'
+            transcription_progress[task_id].update({
+                'progress': 30,
+                'status': 'converting',
+                'message': 'Converting video to audio format...'
+            })
 
             # Convert to WAV
             audio_path = convert_to_wav(video_path)
             if not audio_path:
-                transcription_progress[task_id]['status'] = 'error'
+                transcription_progress[task_id].update({
+                    'status': 'error',
+                    'message': 'Failed to convert video to audio'
+                })
                 return jsonify({'error': 'Failed to convert video to audio', 'task_id': task_id}), 400
 
-            transcription_progress[task_id]['progress'] = 50
-            transcription_progress[task_id]['status'] = 'transcribing'
+            transcription_progress[task_id].update({
+                'progress': 50,
+                'status': 'transcribing',
+                'message': 'Starting transcription process (this may take several minutes)...'
+            })
 
             # Verify audio file before transcription
             if not validate_audio_file(audio_path):
-                transcription_progress[task_id]['status'] = 'error'
+                transcription_progress[task_id].update({
+                    'status': 'error',
+                    'message': 'Invalid audio file generated'
+                })
                 return jsonify({'error': 'Invalid audio file generated', 'task_id': task_id}), 400
 
             try:
@@ -104,6 +125,7 @@ def transcribe():
                 transcription_progress[task_id].update({
                     'progress': 100,
                     'status': 'completed',
+                    'message': 'Transcription completed successfully!',
                     'transcription': result['text']
                 })
                 
@@ -113,10 +135,16 @@ def transcribe():
                 })
             except Exception as e:
                 logger.error(f"Transcription error: {str(e)}")
-                transcription_progress[task_id]['status'] = 'error'
+                transcription_progress[task_id].update({
+                    'status': 'error',
+                    'message': f'Transcription failed: {str(e)}'
+                })
                 return jsonify({'error': f'Transcription failed: {str(e)}', 'task_id': task_id}), 500
 
     except Exception as e:
         logger.error(f"Error processing video: {str(e)}")
-        transcription_progress[task_id]['status'] = 'error'
+        transcription_progress[task_id].update({
+            'status': 'error',
+            'message': str(e)
+        })
         return jsonify({'error': str(e), 'task_id': task_id}), 500
