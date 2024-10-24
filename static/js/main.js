@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getStatusMessage(status, progress) {
         switch(status) {
             case 'downloading':
-                return `Downloading video (${progress}%)...`;
+                return `Processing video (${progress}%)...`;
             case 'converting':
                 return `Converting to audio (${progress}%)...`;
             case 'transcribing':
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Progress update:', { progress, status, message });
         
         // Update progress bar
-        progressBar.style.width = `${progress}%`;
         progressBar.setAttribute('aria-valuenow', progress);
         
         // Update status message with custom message if provided
@@ -40,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add appropriate Bootstrap classes based on status
         progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+        progressBar.style.width = `${progress}%`;
         if (status === 'completed') {
             progressBar.classList.add('bg-success');
         } else if (status === 'error') {
@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
     socket.on('connect', () => {
         console.log('WebSocket connected');
         errorAlert.classList.add('d-none');
+        currentTaskId = Date.now().toString()
+        socket.emit('join', { room: currentTaskId, task_id: currentTaskId });
     });
 
     socket.on('disconnect', () => {
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     socket.on('progress_update', (data) => {
         console.log('Progress update received:', data);
+        console.log('Current task ID:', currentTaskId);
         if (data.task_id === currentTaskId) {
             // Update progress bar and status
             updateProgress(data.progress, data.status, data.message);
@@ -107,6 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Submitting form with URL:', formData.get('video_url'));
 
         try {
+            currentTaskId = '1729783219';
+            await socket.emit('join', { task_id: currentTaskId });
+
+            formData.append('task_id', currentTaskId);
+            
             const response = await fetch('/transcribe', {
                 method: 'POST',
                 body: formData
@@ -115,12 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log('Server response:', data);
 
-            if (response.ok && data.task_id) {
-                currentTaskId = data.task_id;
-                socket.emit('join', { task_id: currentTaskId });
-            } else {
-                throw new Error(data.error || 'Failed to process video');
-            }
         } catch (error) {
             console.error('Request error:', error);
             errorAlert.textContent = error.message;

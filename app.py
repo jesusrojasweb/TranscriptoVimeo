@@ -70,8 +70,8 @@ def transcribe():
         return jsonify({'error': 'No URL provided'}), 400
 
     # Generate a unique task ID
-    task_id = str(int(time.time()))
-    logger.info(f"Starting new transcription task: {task_id}")
+    task_id = request.form.get('task_id') or str(time.time())
+    logger.info(f"Starting new transcription task: {task_id}\n\n")
     
     def progress_callback(progress, status):
         update_progress(task_id, progress, status)
@@ -79,7 +79,7 @@ def transcribe():
     try:
         # Create temporary directory for processing
         with tempfile.TemporaryDirectory() as temp_dir:
-            logger.info(f"Processing video URL: {video_url}")
+            logger.info(f"Processing video URL: {video_url}\n\n")
             
             # Download video with progress tracking
             video_path = download_video(video_url, temp_dir, progress_callback)
@@ -103,12 +103,11 @@ def transcribe():
 
             try:
                 # Transcribe with periodic progress updates
-                logger.info("Starting transcription...")
+                logger.info("Starting transcription...\n\n")
                 
                 # Simulate transcription progress from 50% to 90%
                 for progress in range(50, 90, 5):
-                    update_progress(task_id, progress, 'transcribing', 
-                                f'Transcribing audio ({progress}% complete)...')
+                    update_progress(task_id, progress, 'transcribing')
                     
                 result = model.transcribe(audio_path)
                 logger.info("Transcription completed successfully")
