@@ -41,12 +41,27 @@ def validate_audio_file(audio_path, format_type="wav"):
         
     return True
 
-def download_video(url, output_dir):
+def download_video(url, output_dir, progress_callback=None):
     """Download video from URL using yt-dlp."""
     try:
+        def progress_hook(d):
+            if d['status'] == 'downloading':
+                # Calculate download progress
+                total_bytes = d.get('total_bytes') or d.get('total_bytes_estimate', 0)
+                downloaded_bytes = d.get('downloaded_bytes', 0)
+                if total_bytes > 0:
+                    progress = (downloaded_bytes / total_bytes) * 30  # Scale to 0-30%
+                    if progress_callback:
+                        progress_callback(min(30, max(10, int(progress))), 'downloading')
+                        
+            elif d['status'] == 'finished':
+                if progress_callback:
+                    progress_callback(30, 'downloading')
+
         ydl_opts = {
             'format': 'best',
             'outtmpl': os.path.join(output_dir, '%(title)s.%(ext)s'),
+            'progress_hooks': [progress_hook],
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -65,23 +80,39 @@ def download_video(url, output_dir):
         logger.error(f"Error downloading video: {str(e)}")
         return None
 
-def convert_to_wav(video_path):
+def convert_to_wav(video_path, progress_callback=None):
     """Convert video file to WAV using pydub."""
     try:
         output_path = os.path.splitext(video_path)[0] + '.wav'
+        
+        # Start conversion progress
+        if progress_callback:
+            progress_callback(35, 'converting')
         
         # Convert video to audio
         logger.info(f"Starting audio conversion: {video_path} -> {output_path}")
         audio = AudioSegment.from_file(video_path)
         
+        # Update progress during conversion
+        if progress_callback:
+            progress_callback(40, 'converting')
+        
         # Export as WAV with specific parameters
         audio = audio.set_channels(1)  # Convert to mono
         audio = audio.set_frame_rate(16000)  # Set sample rate to 16kHz
+        
+        if progress_callback:
+            progress_callback(45, 'converting')
+            
         audio.export(output_path, format="wav")
         
         # Validate the converted audio
         if not validate_audio_file(output_path, "wav"):
             return None
+            
+        # Conversion complete
+        if progress_callback:
+            progress_callback(50, 'converting')
             
         return output_path
     except Exception as e:
