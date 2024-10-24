@@ -40,6 +40,7 @@ def generate_progress_events(task_id):
             progress = transcription_progress[task_id]
             # Only send event if progress has changed
             if progress != last_progress:
+                logger.info(f"Sending progress update for task {task_id}: {progress}")
                 data = json.dumps({
                     'progress': progress['progress'],
                     'status': progress['status'],
@@ -50,12 +51,14 @@ def generate_progress_events(task_id):
                 last_progress = progress.copy()
             
             if progress['status'] in ['completed', 'error']:
+                logger.info(f"Task {task_id} finished with status: {progress['status']}")
                 break
         time.sleep(0.5)
 
 @app.route('/progress/<task_id>')
 def progress(task_id):
     """Stream progress updates for a specific task."""
+    logger.info(f"SSE connection established for task: {task_id}")
     return Response(generate_progress_events(task_id),
                    mimetype='text/event-stream')
 
@@ -67,10 +70,12 @@ def transcribe():
 
     # Generate a unique task ID
     task_id = str(int(time.time()))
+    logger.info(f"Starting new transcription task: {task_id}")
+    
     transcription_progress[task_id] = {
         'progress': 0,
         'status': 'downloading',
-        'message': 'Initiating video download...'
+        'message': 'Starting video download...'
     }
 
     try:
@@ -79,6 +84,7 @@ def transcribe():
             logger.info(f"Processing video URL: {video_url}")
             
             # Download video
+            transcription_progress[task_id]['message'] = 'Downloading video from source (0-30%)...'
             video_path = download_video(video_url, temp_dir)
             if not video_path:
                 transcription_progress[task_id].update({
@@ -90,8 +96,9 @@ def transcribe():
             transcription_progress[task_id].update({
                 'progress': 30,
                 'status': 'converting',
-                'message': 'Converting video to audio format...'
+                'message': 'Converting video to audio format (30-50%)...'
             })
+            logger.info(f"Video download complete, starting conversion for task: {task_id}")
 
             # Convert to WAV
             audio_path = convert_to_wav(video_path)
@@ -105,8 +112,9 @@ def transcribe():
             transcription_progress[task_id].update({
                 'progress': 50,
                 'status': 'transcribing',
-                'message': 'Starting transcription process (this may take several minutes)...'
+                'message': 'Transcribing audio to text (50-100%). This may take several minutes...'
             })
+            logger.info(f"Audio conversion complete, starting transcription for task: {task_id}")
 
             # Verify audio file before transcription
             if not validate_audio_file(audio_path):
