@@ -1,0 +1,78 @@
+[info] 2925637940.mp4?filename=file: Downloading 1 format(s): mp4
+[download] Destination: /tmp/tmp90nhm6he/2925637940.mp4
+[download]   0.0% of  146.10MiB at  Unknown B/s ETA Unknown2024-10-24 14:16:43,626 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.0% of  146.10MiB at   29.65KiB/s ETA 01:24:072024-10-24 14:16:43,727 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.0% of  146.10MiB at   34.49KiB/s ETA 01:12:172024-10-24 14:16:43,829 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.0% of  146.10MiB at   49.29KiB/s ETA 50:342024-10-24 14:16:43,930 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.0% of  146.10MiB at   76.43KiB/s ETA 32:372024-10-24 14:16:44,031 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.0% of  146.10MiB at  124.27KiB/s ETA 20:032024-10-24 14:16:44,133 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.1% of  146.10MiB at  208.04KiB/s ETA 11:582024-10-24 14:16:44,236 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.2% of  146.10MiB at  357.99KiB/s ETA 06:572024-10-24 14:16:44,338 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.3% of  146.10MiB at  626.99KiB/s ETA 03:572024-10-24 14:16:44,441 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   0.7% of  146.10MiB at    1.09MiB/s ETA 02:132024-10-24 14:16:44,543 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   1.4% of  146.10MiB at    1.96MiB/s ETA 01:132024-10-24 14:16:44,648 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   2.7% of  146.10MiB at    3.54MiB/s ETA 00:402024-10-24 14:16:44,755 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   5.5% of  146.10MiB at    6.46MiB/s ETA 00:212024-10-24 14:16:44,864 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]   8.2% of  146.10MiB at    8.91MiB/s ETA 00:152024-10-24 14:16:44,973 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  11.0% of  146.10MiB at   10.96MiB/s ETA 00:112024-10-24 14:16:45,085 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  13.7% of  146.10MiB at   12.75MiB/s ETA 00:092024-10-24 14:16:45,194 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  16.4% of  146.10MiB at   14.29MiB/s ETA 00:082024-10-24 14:16:45,305 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  19.2% of  146.10MiB at   15.64MiB/s ETA 00:072024-10-24 14:16:45,415 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  21.9% of  146.10MiB at   16.85MiB/s ETA 00:062024-10-24 14:16:45,525 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  24.6% of  146.10MiB at   17.90MiB/s ETA 00:062024-10-24 14:16:45,637 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  27.4% of  146.10MiB at   18.86MiB/s ETA 00:052024-10-24 14:16:45,747 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  30.1% of  146.10MiB at   19.71MiB/s ETA 00:052024-10-24 14:16:45,858 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  32.9% of  146.10MiB at   20.49MiB/s ETA 00:042024-10-24 14:16:45,968 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  35.6% of  146.10MiB at   21.22MiB/s ETA 00:042024-10-24 14:16:46,076 - app - INFO - Updating progress for task 1729779402: 10%, status: downloading
+[download]  38.3% of  146.10MiB at   21.86MiB/s ETA 00:042024-10-24 14:16:46,187 - app - INFO - Updating progress for task 1729779402: 11%, status: downloading
+[download]  41.1% of  146.10MiB at   22.47MiB/s ETA 00:032024-10-24 14:16:46,296 - app - INFO - Updating progress for task 1729779402: 12%, status: downloading
+[download]  43.8% of  146.10MiB at   23.04MiB/s ETA 00:032024-10-24 14:16:46,403 - app - INFO - Updating progress for task 1729779402: 13%, status: downloading
+[download]  46.5% of  146.10MiB at   23.57MiB/s ETA 00:032024-10-24 14:16:46,511 - app - INFO - Updating progress for task 1729779402: 13%, status: downloading
+[download]  49.3% of  146.10MiB at   24.03MiB/s ETA 00:032024-10-24 14:16:46,622 - app - INFO - Updating progress for task 1729779402: 14%, status: downloading
+[download]  52.0% of  146.10MiB at   24.42MiB/s ETA 00:022024-10-24 14:16:46,738 - app - INFO - Updating progress for task 1729779402: 15%, status: downloading
+[download]  54.8% of  146.10MiB at   24.82MiB/s ETA 00:022024-10-24 14:16:46,849 - app - INFO - Updating progress for task 1729779402: 16%, status: downloading
+[download]  57.5% of  146.10MiB at   25.18MiB/s ETA 00:022024-10-24 14:16:46,962 - app - INFO - Updating progress for task 1729779402: 17%, status: downloading
+[download]  60.2% of  146.10MiB at   25.51MiB/s ETA 00:022024-10-24 14:16:47,076 - app - INFO - Updating progress for task 1729779402: 18%, status: downloading
+[download]  63.0% of  146.10MiB at   25.83MiB/s ETA 00:022024-10-24 14:16:47,187 - app - INFO - Updating progress for task 1729779402: 18%, status: downloading
+[download]  65.7% of  146.10MiB at   26.15MiB/s ETA 00:012024-10-24 14:16:47,297 - app - INFO - Updating progress for task 1729779402: 19%, status: downloading
+[download]  68.4% of  146.10MiB at   26.42MiB/s ETA 00:012024-10-24 14:16:47,411 - app - INFO - Updating progress for task 1729779402: 20%, status: downloading
+[download]  71.2% of  146.10MiB at   26.71MiB/s ETA 00:012024-10-24 14:16:47,520 - app - INFO - Updating progress for task 1729779402: 21%, status: downloading
+[download]  73.9% of  146.10MiB at   26.97MiB/s ETA 00:012024-10-24 14:16:47,630 - app - INFO - Updating progress for task 1729779402: 22%, status: downloading
+[download]  76.7% of  146.10MiB at   27.21MiB/s ETA 00:012024-10-24 14:16:47,742 - app - INFO - Updating progress for task 1729779402: 22%, status: downloading
+[download]  79.4% of  146.10MiB at   24.82MiB/s ETA 00:012024-10-24 14:16:48,300 - app - INFO - Updating progress for task 1729779402: 23%, status: downloading
+[download]  82.1% of  146.10MiB at   25.07MiB/s ETA 00:012024-10-24 14:16:48,412 - app - INFO - Updating progress for task 1729779402: 24%, status: downloading
+[download]  84.9% of  146.10MiB at   25.30MiB/s ETA 00:002024-10-24 14:16:48,526 - app - INFO - Updating progress for task 1729779402: 25%, status: downloading
+[download]  87.6% of  146.10MiB at   25.53MiB/s ETA 00:002024-10-24 14:16:48,639 - app - INFO - Updating progress for task 1729779402: 26%, status: downloading
+[download]  90.4% of  146.10MiB at   25.75MiB/s ETA 00:002024-10-24 14:16:48,751 - app - INFO - Updating progress for task 1729779402: 27%, status: downloading
+[download]  93.1% of  146.10MiB at   25.97MiB/s ETA 00:002024-10-24 14:16:48,863 - app - INFO - Updating progress for task 1729779402: 27%, status: downloading
+[download]  95.8% of  146.10MiB at   26.18MiB/s ETA 00:002024-10-24 14:16:48,974 - app - INFO - Updating progress for task 1729779402: 28%, status: downloading
+[download]  98.6% of  146.10MiB at   26.37MiB/s ETA 00:002024-10-24 14:16:49,087 - app - INFO - Updating progress for task 1729779402: 29%, status: downloading
+[download] 100.0% of  146.10MiB at   26.25MiB/s ETA 00:002024-10-24 14:16:49,191 - app - INFO - Updating progress for task 1729779402: 30%, status: downloading
+[download] 100% of  146.10MiB in 00:00:05 at 25.55MiB/s2024-10-24 14:16:49,299 - app - INFO - Updating progress for task 1729779402: 30%, status: downloading
+
+2024-10-24 14:16:49,403 - utils - INFO - Video downloaded successfully: /tmp/tmp90nhm6he/2925637940.mp4, size: 153192715 bytes
+2024-10-24 14:16:49,404 - app - INFO - Updating progress for task 1729779402: 35%, status: converting
+2024-10-24 14:16:49,505 - utils - INFO - Starting audio conversion: /tmp/tmp90nhm6he/2925637940.mp4 -> /tmp/tmp90nhm6he/2925637940.wav
+2024-10-24 14:16:51,826 - app - INFO - Updating progress for task 1729779402: 40%, status: converting
+2024-10-24 14:16:52,292 - app - INFO - Updating progress for task 1729779402: 45%, status: converting
+2024-10-24 14:16:52,399 - utils - INFO - Audio file validated: /tmp/tmp90nhm6he/2925637940.wav, size: 15985368 bytes
+2024-10-24 14:16:52,400 - utils - INFO - WAV file properties - channels: 1, sample_width: 2, frame_rate: 16000, frames: 7992662
+2024-10-24 14:16:52,400 - app - INFO - Updating progress for task 1729779402: 50%, status: converting
+2024-10-24 14:16:52,509 - app - INFO - Updating progress for task 1729779402: 50%, status: transcribing
+2024-10-24 14:16:52,609 - utils - INFO - Audio file validated: /tmp/tmp90nhm6he/2925637940.wav, size: 15985368 bytes
+2024-10-24 14:16:52,609 - utils - INFO - WAV file properties - channels: 1, sample_width: 2, frame_rate: 16000, frames: 7992662
+2024-10-24 14:16:52,609 - app - INFO - Starting transcription...
+2024-10-24 14:16:52,609 - app - INFO - Updating progress for task 1729779402: 50%, status: transcribing
+2024-10-24 14:16:52,710 - app - INFO - Updating progress for task 1729779402: 55%, status: transcribing
+2024-10-24 14:16:52,810 - app - INFO - Updating progress for task 1729779402: 60%, status: transcribing
+2024-10-24 14:16:52,910 - app - INFO - Updating progress for task 1729779402: 65%, status: transcribing
+2024-10-24 14:16:53,011 - app - INFO - Updating progress for task 1729779402: 70%, status: transcribing
+2024-10-24 14:16:53,111 - app - INFO - Updating progress for task 1729779402: 75%, status: transcribing
+2024-10-24 14:16:53,211 - app - INFO - Updating progress for task 1729779402: 80%, status: transcribing
+2024-10-24 14:16:53,311 - app - INFO - Updating progress for task 1729779402: 85%, status: transcribing
+/home/runner/TranscriptoVimeo/.pythonlibs/lib/python3.11/site-packages/whisper/transcribe.py:126: UserWarning: FP16 is not supported on CPU; using FP32 instead
+  warnings.warn("FP16 is not supported on CPU; using FP32 instead")
+2024-10-24 14:20:22,826 - app - INFO - Transcription completed successfully
+2024-10-24 14:20:22,826 - app - INFO - Updating progress for task 1729779402: 100%, status: completed
+2024-10-24 14:20:22,931 - werkzeug - INFO - 172.31.196.202 - - [24/Oct/2024 14:20:22] "POST /transcribe HTTP/1.1" 200 -
+2024-10-24 14:20:23,108 - app - INFO - Client joined room for task: 1729779402

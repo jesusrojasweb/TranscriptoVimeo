@@ -12,6 +12,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const socket = io();
     let currentTaskId = null;
 
+    // Helper function for status messages
+    function getStatusMessage(status, progress) {
+        switch(status) {
+            case 'downloading':
+                return `Downloading video (${progress}%)...`;
+            case 'converting':
+                return `Converting to audio (${progress}%)...`;
+            case 'transcribing':
+                return `Transcribing audio (${progress}%). This may take several minutes...`;
+            case 'completed':
+                return 'Transcription completed successfully!';
+            default:
+                return `Processing (${progress}%)...`;
+        }
+    }
+
     function updateProgress(progress, status, message) {
         console.log('Progress update:', { progress, status, message });
         
@@ -20,18 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBar.setAttribute('aria-valuenow', progress);
         
         // Update status message with custom message if provided
-        if (message) {
-            progressStatus.textContent = message;
-        } else {
-            const statusMessages = {
-                'downloading': 'Downloading video (0-30%)...',
-                'converting': 'Converting video to audio (30-50%)...',
-                'transcribing': 'Transcribing audio to text (50-100%). This may take several minutes...',
-                'completed': 'Transcription completed successfully!',
-                'error': 'Error occurred during processing'
-            };
-            progressStatus.textContent = statusMessages[status] || status;
-        }
+        progressStatus.textContent = message || getStatusMessage(status, progress);
 
         // Add appropriate Bootstrap classes based on status
         progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
@@ -48,19 +53,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Socket.IO event handlers
     socket.on('connect', () => {
         console.log('WebSocket connected');
+        errorAlert.classList.add('d-none');
     });
 
-    socket.on('connect_error', (error) => {
-        console.error('WebSocket connection error:', error);
-        errorAlert.textContent = 'Lost connection to server. Please refresh the page.';
+    socket.on('disconnect', () => {
+        console.log('WebSocket disconnected');
+        errorAlert.textContent = 'Connection lost. Please refresh the page.';
         errorAlert.classList.remove('d-none');
+    });
+
+    socket.on('reconnect', () => {
+        console.log('WebSocket reconnected');
+        errorAlert.classList.add('d-none');
+        if (currentTaskId) {
+            socket.emit('join', { task_id: currentTaskId });
+        }
     });
 
     socket.on('progress_update', (data) => {
         console.log('Progress update received:', data);
         if (data.task_id === currentTaskId) {
+            // Update progress bar and status
             updateProgress(data.progress, data.status, data.message);
 
+            // Handle completion
             if (data.status === 'completed' && data.transcription) {
                 transcriptionText.textContent = data.transcription;
                 transcriptionResult.classList.remove('d-none');
