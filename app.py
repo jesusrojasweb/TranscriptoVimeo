@@ -1,6 +1,7 @@
 import os
 import tempfile
-from flask import Flask, render_template, request, jsonify, Response
+from flask import Flask, render_template, request, jsonify
+from flask_socketio import SocketIO, emit, join_room
 from werkzeug.utils import secure_filename
 import whisper
 from utils import download_video, convert_to_wav, validate_audio_file
@@ -10,6 +11,7 @@ import json
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your-secret-key-here')
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO,
@@ -32,45 +34,34 @@ except Exception as e:
 def index():
     return render_template('index.html')
 
-def update_progress(task_id, progress, status, message=None):
-    """Update progress for a task with proper logging."""
+def update_progress(task_id, progress, status, message=None, transcription=None):
+    """Update progress for a task and emit via WebSocket."""
     logger.info(f"Updating progress for task {task_id}: {progress}%, status: {status}")
-    transcription_progress[task_id].update({
+    
+    data = {
+        'task_id': task_id,
         'progress': progress,
         'status': status,
         'message': message or f'{status.capitalize()} in progress ({progress}%)'
-    })
+    }
+    
+    if transcription is not None:
+        data['transcription'] = transcription
+        
+    transcription_progress[task_id] = data
+    socketio.emit('progress_update', data, room=task_id)
     time.sleep(0.1)  # Small delay to ensure updates are received
 
-def generate_progress_events(task_id):
-    """Generate server-sent events for progress updates."""
-    last_progress = None
-    while True:
-        if task_id in transcription_progress:
-            progress = transcription_progress[task_id]
-            # Only send event if progress has changed
-            if progress != last_progress:
-                logger.info(f"Sending progress update for task {task_id}: {progress}")
-                data = json.dumps({
-                    'progress': progress['progress'],
-                    'status': progress['status'],
-                    'message': progress.get('message', ''),
-                    'transcription': progress.get('transcription', '')
-                })
-                yield f"data: {data}\n\n"
-                last_progress = progress.copy()
-            
-            if progress['status'] in ['completed', 'error']:
-                logger.info(f"Task {task_id} finished with status: {progress['status']}")
-                break
-        time.sleep(0.5)
-
-@app.route('/progress/<task_id>')
-def progress(task_id):
-    """Stream progress updates for a specific task."""
-    logger.info(f"SSE connection established for task: {task_id}")
-    return Response(generate_progress_events(task_id),
-                   mimetype='text/event-stream')
+@socketio.on('join')
+def on_join(data):
+    """Join a room for task-specific progress updates."""
+    task_id = data['task_id']
+    join_room(task_id)
+    logger.info(f"Client joined room for task: {task_id}")
+    
+    # Send current progress if available
+    if task_id in transcription_progress:
+        emit('progress_update', transcription_progress[task_id])
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
@@ -82,13 +73,6 @@ def transcribe():
     task_id = str(int(time.time()))
     logger.info(f"Starting new transcription task: {task_id}")
     
-    # Initialize progress
-    transcription_progress[task_id] = {
-        'progress': 0,
-        'status': 'downloading',
-        'message': 'Starting video download...'
-    }
-
     def progress_callback(progress, status):
         update_progress(task_id, progress, status)
 
@@ -124,14 +108,14 @@ def transcribe():
                 # Simulate transcription progress from 50% to 90%
                 for progress in range(50, 90, 5):
                     update_progress(task_id, progress, 'transcribing', 
-                                 f'Transcribing audio ({progress}% complete)...')
+                                f'Transcribing audio ({progress}% complete)...')
                     
                 result = model.transcribe(audio_path)
                 logger.info("Transcription completed successfully")
                 
-                # Final update
-                update_progress(task_id, 100, 'completed', 'Transcription completed successfully!')
-                transcription_progress[task_id]['transcription'] = result['text']
+                # Final update with transcription result
+                update_progress(task_id, 100, 'completed', 'Transcription completed successfully!', 
+                              transcription=result['text'])
                 
                 return jsonify({
                     'success': True,
@@ -146,3 +130,6 @@ def transcribe():
         logger.error(f"Error processing video: {str(e)}")
         update_progress(task_id, 0, 'error', str(e))
         return jsonify({'error': str(e), 'task_id': task_id}), 500
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -11,4 +11,5 @@ dependencies = [
     "openai-whisper>=20240930",
     "yt-dlp>=2024.10.22",
     "pydub>=0.25.1",
+    "flask-socketio>=5.4.1",
 ]

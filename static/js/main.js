@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressBar = document.getElementById('progressBar');
     const progressStatus = document.getElementById('progressStatus');
 
-    let eventSource = null;
+    // Initialize Socket.IO connection
+    const socket = io();
+    let currentTaskId = null;
 
     function updateProgress(progress, status, message) {
         console.log('Progress update:', { progress, status, message });
@@ -43,19 +45,40 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function cleanupEventSource() {
-        if (eventSource) {
-            console.log('Closing EventSource connection');
-            eventSource.close();
-            eventSource = null;
+    // Socket.IO event handlers
+    socket.on('connect', () => {
+        console.log('WebSocket connected');
+    });
+
+    socket.on('connect_error', (error) => {
+        console.error('WebSocket connection error:', error);
+        errorAlert.textContent = 'Lost connection to server. Please refresh the page.';
+        errorAlert.classList.remove('d-none');
+    });
+
+    socket.on('progress_update', (data) => {
+        console.log('Progress update received:', data);
+        if (data.task_id === currentTaskId) {
+            updateProgress(data.progress, data.status, data.message);
+
+            if (data.status === 'completed' && data.transcription) {
+                transcriptionText.textContent = data.transcription;
+                transcriptionResult.classList.remove('d-none');
+                processingStatus.classList.add('d-none');
+                submitBtn.disabled = false;
+            } else if (data.status === 'error') {
+                errorAlert.textContent = data.message || 'Failed to process video';
+                errorAlert.classList.remove('d-none');
+                processingStatus.classList.add('d-none');
+                submitBtn.disabled = false;
+            }
         }
-    }
+    });
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Reset UI
-        cleanupEventSource();
         errorAlert.classList.add('d-none');
         transcriptionResult.classList.add('d-none');
         processingStatus.classList.remove('d-none');
@@ -77,44 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Server response:', data);
 
             if (response.ok && data.task_id) {
-                // Set up SSE connection
-                console.log('Establishing SSE connection for task:', data.task_id);
-                eventSource = new EventSource(`/progress/${data.task_id}`);
-                
-                eventSource.onmessage = function(event) {
-                    console.log('SSE message received:', event.data);
-                    const progressData = JSON.parse(event.data);
-                    updateProgress(
-                        progressData.progress,
-                        progressData.status,
-                        progressData.message
-                    );
-
-                    if (progressData.status === 'completed') {
-                        console.log('Transcription completed');
-                        transcriptionText.textContent = progressData.transcription;
-                        transcriptionResult.classList.remove('d-none');
-                        cleanupEventSource();
-                        processingStatus.classList.add('d-none');
-                        submitBtn.disabled = false;
-                    } else if (progressData.status === 'error') {
-                        console.error('Transcription error:', progressData.message);
-                        errorAlert.textContent = progressData.message || 'Failed to process video';
-                        errorAlert.classList.remove('d-none');
-                        processingStatus.classList.add('d-none');
-                        submitBtn.disabled = false;
-                        cleanupEventSource();
-                    }
-                };
-
-                eventSource.onerror = function(error) {
-                    console.error('SSE connection error:', error);
-                    cleanupEventSource();
-                    errorAlert.textContent = 'Lost connection to server';
-                    errorAlert.classList.remove('d-none');
-                    processingStatus.classList.add('d-none');
-                    submitBtn.disabled = false;
-                };
+                currentTaskId = data.task_id;
+                socket.emit('join', { task_id: currentTaskId });
             } else {
                 throw new Error(data.error || 'Failed to process video');
             }
@@ -124,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
             errorAlert.classList.remove('d-none');
             processingStatus.classList.add('d-none');
             submitBtn.disabled = false;
-            cleanupEventSource();
         }
     });
 });
