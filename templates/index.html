@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Video Transcription</h2>
+                
+                <form id="transcriptionForm" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="video_url" class="form-label">Video URL (Vimeo supported)</label>
+                        <input type="url" class="form-control" id="video_url" name="video_url" 
+                               required placeholder="https://vimeo.com/...">
+                        <div class="invalid-feedback">
+                            Please provide a valid video URL.
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                        Transcribe Video
+                    </button>
+                </form>
+
+                <div id="processingStatus" class="alert alert-info mt-3 d-none">
+                    Processing your video... This may take a few minutes.
+                </div>
+
+                <div id="resultContainer" class="mt-4">
+                    <div id="transcriptionResult" class="border rounded p-3 d-none">
+                        <h4>Transcription Result:</h4>
+                        <p id="transcriptionText"></p>
+                    </div>
+                </div>
+
+                <div id="errorAlert" class="alert alert-danger mt-3 d-none">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

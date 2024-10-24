@@ -1,0 +1,16 @@
+/* Additional custom styles if needed */
+.card {
+    background: var(--bs-dark);
+    border-color: var(--bs-border-color);
+}
+
+#transcriptionResult {
+    background: var(--bs-dark);
+    border-color: var(--bs-border-color);
+}
+
+#transcriptionText {
+    white-space: pre-wrap;
+    font-size: 1rem;
+    line-height: 1.6;
+}
